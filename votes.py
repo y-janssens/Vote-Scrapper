@@ -11,14 +11,14 @@ title = tk.Label(root, text='Comptabilisateur de votes', font=(
     "Courier New", 15), bg="#E8E7E3", fg="black")
 title.pack(pady=7.5)
 
-input = tk.Entry(root, font=(
+text_input = tk.Entry(root, font=(
     "Courier New", 8), relief="flat")
-input.insert(0, 'Url du sujet de votes')
-input.place(x=12.5, y=45, width=475, height=40)
+text_input.insert(0, 'Url du sujet de votes')
+text_input.place(x=12.5, y=45, width=475, height=40)
 
 
-def getUrl():
-    url_input = input.get()
+def get_url():
+    url_input = text_input.get()
     html_text = requests.get(
         url_input).text
     soup = BeautifulSoup(html_text, 'lxml')
@@ -47,8 +47,8 @@ def getUrl():
             print(votes)
 
 
-valid = tk.Button(root, text="Enregistrer", command=getUrl, relief="flat", font=(
-    "Courier New", 8), bg="#74A174", fg="white", activebackground="#74A174")
+valid = tk.Button(root, text="Enregistrer", command=get_url, relief="flat", font=(
+    "Courier New", 8), bg="#6cb46c", fg="white", activebackground="#6cb46c", activeforeground="white")
 valid.place(x=200, y=95, width=100, height=35)
 
 root.mainloop()
