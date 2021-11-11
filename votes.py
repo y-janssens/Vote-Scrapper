@@ -1,37 +1,54 @@
 from bs4 import BeautifulSoup
 import requests
+import tkinter as tk
 
-""" login_url = 'https://marbrume.forumactif.com/login'
-data = {
-    'username': 'Séraphin Chantebrume',
-    'password': 'imovane78'
-}
+root = tk.Tk()
+root.title("Votes Scrapper")
+root.geometry("500x140")
+root.configure(background='#E8E7E3')
 
-with requests.Session() as s:
-    response = requests.post(login_url , data)
-    print(response.text)
-    index_page= s.get('https://marbrume.forumactif.com/admin/?part=admin&tid=545387369f9ee73d670a3f637808e907&_tc=1636586602')
-    soup = BeautifulSoup(index_page.text, 'html.parser')
-    print(soup.title)  """
+title = tk.Label(root, text='Comptabilisateur de votes', font=(
+    "Courier New", 15), bg="#E8E7E3", fg="black")
+title.pack(pady=7.5)
 
-html_text = requests.get('https://marbrume.forumactif.com/t4988-vote-d-avril-2020-sujet-3').text
-soup = BeautifulSoup(html_text, 'lxml')
-users_list = list(soup.find_all('span', class_='pseudal'))
+input = tk.Entry(root, font=(
+    "Courier New", 8), relief="flat")
+input.insert(0, 'Url du sujet de votes')
+input.place(x=12.5, y=45, width=475, height=40)
 
-result_list = []
-voters_list = []
 
-print('Votes du mois: \n')
-for users in users_list:
-    user_name = users.text    
-    result_list.append(user_name)
+def getUrl():
+    url_input = input.get()
+    html_text = requests.get(
+        url_input).text
+    soup = BeautifulSoup(html_text, 'lxml')
+    users_list = list(soup.find_all('span', class_='pseudal'))
 
-for i in result_list:
-    count = result_list.count(i)
-    voters_list.append(f'{i} : {count}')
+    result_list = []
+    voters_list = []
+    with open('votes.txt', 'w', encoding='utf-8') as f:
+        f.write('Votes du mois: \n\n')
+        print('Votes du mois: \n')
+    for users in users_list:
+        user_name = users.text
+        result_list.append(user_name)
 
-voters_list = list(dict.fromkeys(voters_list))
-voters_list.sort()
+    for i in result_list:
+        count = result_list.count(i)
+        voters_list.append(f'{i} : {count}')
 
-for votes in voters_list:
-    print(votes)
+    voters_list = list(dict.fromkeys(voters_list))
+    voters_list.sort()
+
+    with open('votes.txt', 'a', encoding='utf-8') as f:
+        for votes in voters_list:
+            f.write(votes)
+            f.write('\n')
+            print(votes)
+
+
+valid = tk.Button(root, text="Enregistrer", command=getUrl, relief="flat", font=(
+    "Courier New", 8), bg="#74A174", fg="white", activebackground="#74A174")
+valid.place(x=200, y=95, width=100, height=35)
+
+root.mainloop()
