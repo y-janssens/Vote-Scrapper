@@ -39,7 +39,7 @@ def get_url():
 
 while True:
     cv.imshow("Votes Scrapper", img)
-    cv.createTrackbar( 'thresh', 'ctrl', 128, 255 )
+    cv.createTrackbar( 'thresh', img, 128, 255 )
 
     k = cv.waitKey(1)
     if k == 27:  # Esc key to breakloop and shutdown
