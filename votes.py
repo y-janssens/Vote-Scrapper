@@ -1,6 +1,7 @@
 from bs4 import BeautifulSoup
 import requests
 import tkinter as tk
+import time
 
 root = tk.Tk()
 root.title("Votes Scrapper")
@@ -13,38 +14,62 @@ title.pack(pady=7.5)
 
 text_input = tk.Entry(root, font=(
     "Courier New", 8), relief="flat")
-text_input.insert(0, 'Url du sujet de votes')
+text_input.insert(
+    0, 'https://marbrume.forumactif.com/t5241-vote-de-juillet-2020-sujet-2')
 text_input.place(x=12.5, y=45, width=475, height=40)
 
 
 def get_url():
-    url_input = text_input.get()
-    html_text = requests.get(
-        url_input).text
-    soup = BeautifulSoup(html_text, 'lxml')
-    users_list = list(soup.find_all('span', class_='pseudal'))
-
+    start = time.time()
+    print('Votes du mois: \n')
     result_list = []
-    voters_list = []
-    with open('votes.txt', 'w', encoding='utf-8') as f:
-        f.write('Votes du mois: \n\n')
-        print('Votes du mois: \n')
-    for users in users_list:
-        user_name = users.text
-        result_list.append(user_name)
+    counter = 0
+    url = text_input.get()
+    root = url[:32]
+    topic = url[32:37]
+    name = url[37:]
 
-    for i in result_list:
-        count = result_list.count(i)
-        voters_list.append(f'{i} : {count}')
+    for i in range(0, 1125, 15):
+        counter = i
 
-    voters_list = list(dict.fromkeys(voters_list))
-    voters_list.sort()
+        if counter == 0:
+            pagination = ''
+        else:
+            pagination = f'p{counter}'
+
+        page = f'{root}{topic}{pagination}{name}'
+        html_text = requests.get(page).text
+        soup = BeautifulSoup(html_text, 'lxml')
+        users_list = list(soup.find_all('span', class_='pseudal'))
+
+        voters_list = []
+        final_votes = []
+
+        with open('votes.txt', 'w', encoding='utf-8') as f:
+            f.write('Votes du mois:\n\n')
+
+        for users in users_list:
+            user_name = users.text
+            result_list.append(user_name)
+
+        for i in result_list:
+            count = result_list.count(i)
+            voters_list.append(f'{i} : {count}')
+
+        voters_list = list(dict.fromkeys(voters_list))
+        voters_list.sort()
+
+        for votes in voters_list:
+            final_votes.append(votes)
 
     with open('votes.txt', 'a', encoding='utf-8') as f:
-        for votes in voters_list:
-            f.write(votes)
+        for z in final_votes:
+            f.write(z)
             f.write('\n')
-            print(votes)
+            print(z)
+    end = time.time()
+    print(f'\nResults saved, time elapsed: {str(end - start)[0:5]}s')
+    exit()
 
 
 valid = tk.Button(root, text="Enregistrer", command=get_url, relief="flat", font=(
