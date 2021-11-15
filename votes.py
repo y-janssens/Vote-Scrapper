@@ -31,6 +31,7 @@ title = tk.Label(root, text='Comptabilisateur de votes', font=(
     "Courier New", 15), bg="#E8E7E3", fg="black")
 title.pack(pady=7.5)
 
+
 text_input = tk.Entry(root, font=(
     "Courier New", 8), relief="flat")
 text_input.insert(
